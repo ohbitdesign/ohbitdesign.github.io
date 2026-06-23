@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ohbitdesign — 宇宙のように幅広く。</title>
+  <meta name="description" content="日常の便利アプリからAI対策ツール、そして宇宙へ。ohbitdesignは小さなツールから大きな夢まで開発しています。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #04071A;
+      --bg2:       #080D26;
+      --bg3:       #0C1230;
+      --blue:      #5B9CF6;
+      --blue-dim:  rgba(91,156,246,0.12);
+      --orange:    #FF9F8E;
+      --white:     #EEF2FF;
+      --muted:     #6B7DB3;
+      --border:    rgba(91,156,246,0.18);
+      --radius:    14px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 400;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── canvas starfield ── */
+    #starfield {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      background: rgba(4,7,26,0.72);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--blue); }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 32px;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: 0.06em;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--white); }
+
+    /* ── hero ── */
+    #hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+    }
+
+    .orbit-ring {
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      border: 1px solid rgba(91,156,246,0.13);
+      border-radius: 50%;
+      animation: spin 40s linear infinite;
+      pointer-events: none;
+    }
+
+    .orbit-ring::before {
+      content: '';
+      position: absolute;
+      width: 8px; height: 8px;
+      background: var(--blue);
+      border-radius: 50%;
+      top: -4px; left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 12px var(--blue);
+    }
+
+    .orbit-ring-2 {
+      width: 340px; height: 340px;
+      border-color: rgba(255,159,142,0.10);
+      animation-duration: 28s;
+      animation-direction: reverse;
+    }
+
+    .orbit-ring-2::before {
+      background: var(--orange);
+      box-shadow: 0 0 10px var(--orange);
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hero-eyebrow {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      color: var(--blue);
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.6rem, 7vw, 5.2rem);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    h1 .jp {
+      display: block;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      margin-top: 14px;
+    }
+
+    .hero-sub {
+      max-width: 480px;
+      margin: 28px auto 44px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    .btn-group { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      border-radius: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      transition: all 0.22s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: #04071A;
+    }
+
+    .btn-primary:hover { background: #7DB5FF; transform: translateY(-2px); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover { border-color: var(--blue); color: var(--blue); transform: translateY(-2px); }
+
+    /* ── sections ── */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 100px 24px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 520px;
+      margin-bottom: 60px;
+    }
+
+    /* ── brand section ── */
+    #brand { background: var(--bg2); }
+
+    .brand-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .brand-text p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.9;
+      margin-bottom: 18px;
+    }
+
+    .brand-text p strong { color: var(--white); font-weight: 500; }
+
+    .brand-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+
+    .stat-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+    }
+
+    .stat-card:first-child { border-radius: var(--radius) 0 0 0; }
+    .stat-card:nth-child(2) { border-radius: 0 var(--radius) 0 0; }
+    .stat-card:nth-child(3) { border-radius: 0 0 0 var(--radius); }
+    .stat-card:last-child { border-radius: 0 0 var(--radius) 0; }
+
+    .stat-icon {
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+    }
+
+    .stat-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .stat-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── products ── */
+    #products { background: var(--bg); }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .product-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 36px 32px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.25s;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent-line, var(--blue));
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .product-card:hover { transform: translateY(-4px); border-color: rgba(91,156,246,0.4); }
+    .product-card:hover::before { opacity: 1; }
+
+    .product-card.orange { --accent-line: var(--orange); }
+    .product-card.orange:hover { border-color: rgba(255,159,142,0.4); }
+
+    .product-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      margin-bottom: 22px;
+    }
+
+    .badge-blue { background: var(--blue-dim); color: var(--blue); }
+    .badge-orange { background: rgba(255,159,142,0.12); color: var(--orange); }
+
+    .product-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .product-name-jp {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 18px;
+      letter-spacing: 0.06em;
+    }
+
+    .product-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 28px;
+    }
+
+    .product-price {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .product-price span {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+
+    .product-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      border-radius: 4px;
+      background: var(--bg3);
+      color: var(--muted);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* ── free tools ── */
+    #tools { background: var(--bg2); }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .tool-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 26px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.22s;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tool-card:hover { transform: translateY(-3px); border-color: rgba(91,156,246,0.35); }
+
+    .tool-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: var(--blue-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .tool-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .tool-desc {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.7;
+      flex: 1;
+    }
+
+    .tool-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      color: var(--blue);
+    }
+
+    .tool-status.soon { color: var(--muted); }
+
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .dot.pulse {
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* ── about ── */
+    #about { background: var(--bg); }
+
+    .about-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 52px;
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 52px;
+      align-items: center;
+    }
+
+    .about-avatar {
+      aspect-ratio: 1;
+      border-radius: 16px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      max-width: 200px;
+      margin: 0 auto;
+    }
+
+    .about-info h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .about-info .handle {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.82rem;
+      color: var(--blue);
+      margin-bottom: 20px;
+      letter-spacing: 0.04em;
+    }
+
+    .about-info p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.85;
+      margin-bottom: 28px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-family: 'Space Grotesk', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .social-link:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* ── footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 36px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: gap;
+      gap: 12px;
+    }
+
+    footer .logo-f {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    footer .logo-f span { color: var(--blue); }
+
+    footer p {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* ── divider ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* ── responsive ── */
+    @media (max-width: 720px) {
+      nav { padding: 16px 20px; }
+      nav ul { gap: 18px; }
+      .brand-grid { grid-template-columns: 1fr; }
+      .brand-stats { order: -1; }
+      .products-grid { grid-template-columns: 1fr; }
+      .about-card { grid-template-columns: 1fr; padding: 32px; gap: 32px; }
+      .orbit-ring { width: 300px; height: 300px; }
+      .orbit-ring-2 { width: 200px; height: 200px; }
+      footer { flex-direction: column; text-align: center; padding: 28px 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .orbit-ring { animation: none; }
+      * { transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">oh<span>bit</span>design</a>
+  <ul>
+    <li><a href="#brand">About</a></li>
+    <li><a href="#products">Products</a></li>
+    <li><a href="#tools">Tools</a></li>
+    <li><a href="https://ohbitdesign.booth.pm" target="_blank" rel="noopener">Shop ↗</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="orbit-ring"></div>
+  <div class="orbit-ring orbit-ring-2"></div>
+
+  <p class="hero-eyebrow">ohbitdesign / 軌道デザイン</p>
+  <h1>
+    Designed<br>for Orbit.
+    <span class="jp">宇宙のように幅広く。</span>
+  </h1>
+  <p class="hero-sub">
+    日常の便利ツールから、宇宙探査シミュレーターまで。<br>
+    小さな一歩を積み重ねながら、大きな軌道を描いています。
+  </p>
+  <div class="btn-group">
+    <a href="#products" class="btn btn-primary">製品を見る</a>
+    <a href="#tools" class="btn btn-ghost">無料ツール</a>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- BRAND -->
+<section id="brand">
+  <div class="container">
+    <div class="brand-grid">
+      <div class="brand-text">
+        <p class="section-label">Brand</p>
+        <h2>軌道デザインについて</h2>
+        <p>
+          <strong>ohbitdesign</strong>（軌道デザイン）は、「宇宙のように幅広く」をコンセプトに、
+          日常の便利アプリ（BtoC）から業務効率化ツール（BtoB）まで開発しています。
+        </p>
+        <p>
+          小さなツールからはじめて、いつか宇宙分野へ。
+          宇宙が好きで、ものを作ることが好きな<strong>個人開発者</strong>が運営しています。
+        </p>
+        <p>
+          すべてのソフトウェアは、ブラウザだけで動く<strong>インストール不要</strong>の設計を大切にしています。
+          難しい手順なしに、すぐ使える体験を届けることが私たちのこだわりです。
+        </p>
+      </div>
+      <div class="brand-stats">
+        <div class="stat-card">
+          <div class="stat-icon">🛠️</div>
+          <div class="stat-title">BtoC Tools</div>
+          <div class="stat-desc">誰でも使える日常の便利ツール</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⚙️</div>
+          <div class="stat-title">BtoB Tools</div>
+          <div class="stat-desc">業務を効率化するソリューション</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🚀</div>
+          <div class="stat-title">Space</div>
+          <div class="stat-desc">宇宙分野への参入を視野に開発中</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🌐</div>
+          <div class="stat-title">No Install</div>
+          <div class="stat-desc">ブラウザだけで動く設計思想</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="container">
+    <p class="section-label">Products</p>
+    <h2>有料ツール</h2>
+    <p class="lead">SNSやAIサービスに投稿する前に、写真・イラストを守るツールです。</p>
+
+    <div class="products-grid">
+      <!-- パシャ消し -->
+      <a href="https://ohbitdesign.booth.pm" target="_blank" rel="noopener" class="product-card">
+        <div class="product-badge badge-blue">✦ Windows / Mac</div>
+        <div class="product-name">パシャ消し</div>
+        <div class="product-name-jp">Photo Privacy Cleaner</div>
+        <p class="product-desc">
+          写真に隠れた撮影日時・位置情報・機種名を、ドラッグ＆ドロップ→ボタン1つで一括削除。インストール不要のブラウザツールです。
+        </p>
+        <div class="product-price">¥300 <span>税込</span></div>
+        <div class="product-tags">
+          <span class="tag">EXIF削除</span>
+          <span class="tag">一括処理</span>
+          <span class="tag">PNG / JPG / WebP</span>
+        </div>
+      </a>
+
+      <!-- Pictect -->
+      <a href="https://ohbitdesign.booth.pm" target="_blank" rel="noopener" class="product-card orange">
+        <div class="product-badge badge-orange">✦ Windows / Mac</div>
+        <div class="product-name">Pictect</div>
+        <div class="product-name-jp">ピックテクト — その絵、AIから守る</div>
+        <p class="product-desc">
+          メタデータ削除に加え、AIに学習されにくくするノイズ・透かしを追加。スライダーで強度を調整し、Before/Afterをプレビューできます。
+        </p>
+        <div class="product-price">¥500 <span>税込</span></div>
+        <div class="product-tags">
+          <span class="tag">AIノイズ</span>
+          <span class="tag">透かし</span>
+          <span class="tag">プレビュー</span>
+          <span class="tag">EXIF削除</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FREE TOOLS -->
+<section id="tools">
+  <div class="container">
+    <p class="section-label">Free Tools</p>
+    <h2>無料ツール</h2>
+    <p class="lead">宇宙が好きなすべての人へ、無料で公開しています。</p>
+
+    <div class="tools-grid">
+      <a href="#" class="tool-card">
+        <div class="tool-icon">🛸</div>
+        <div class="tool-name">Docking Simulator</div>
+        <p class="tool-desc">
+          宇宙船のドッキングをシミュレーション。姿勢制御スラスターを操作して、ステーションへの精密ドッキングを体験できます。
+        </p>
+        <span class="tool-status">
+          <span class="dot pulse"></span>Coming Soon
+        </span>
+      </a>
+
+      <a href="#" class="tool-card">
+        <div class="tool-icon">🛰️</div>
+        <div class="tool-name">ISS Tracker</div>
+        <p class="tool-desc">
+          NASA APIを使ったリアルタイムISSトラッキングツール。今この瞬間、ISSが地球のどこを飛んでいるか確認できます。
+        </p>
+        <span class="tool-status soon">
+          <span class="dot"></span>Planned
+        </span>
+      </a>
+
+      <a href="#" class="tool-card">
+        <div class="tool-icon">🌌</div>
+        <div class="tool-name">More to come...</div>
+        <p class="tool-desc">
+          宇宙に関連するツールをこれからも開発していきます。GitHubとXをフォローして最新情報をお待ちください。
+        </p>
+        <span class="tool-status soon">
+          <span class="dot"></span>In Development
+        </span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <p class="section-label">About</p>
+    <h2>開発者について</h2>
+    <div class="about-card">
+      <div class="about-avatar">🧑‍💻</div>
+      <div class="about-info">
+        <h3>軌道デザイン</h3>
+        <p class="handle">@ohbitdesign</p>
+        <p>
+          宇宙が好きで、プログラミングを勉強しながらツールを作っている個人開発者です。
+          「宇宙のように幅広く」をコンセプトに、日常の便利ツールから宇宙関連コンテンツまで
+          少しずつ開発を進めています。<br><br>
+          数年後には宇宙分野への参入を視野に入れながら、まずは小さな一歩から。
+        </p>
+        <div class="social-links">
+          <a href="https://ohbitdesign.booth.pm" target="_blank" rel="noopener" class="social-link">
+            🛍 Booth Shop
+          </a>
+          <a href="https://github.com/ohbitdesign" target="_blank" rel="noopener" class="social-link">
+            ⌥ GitHub
+          </a>
+          <a href="https://x.com/軌道デザイン" target="_blank" rel="noopener" class="social-link">
+            𝕏 Twitter / X
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo-f">oh<span>bit</span>design</div>
+  <p>© 2026 ohbitdesign / 軌道デザイン. All rights reserved.</p>
+</footer>
+
+<!-- STARFIELD CANVAS -->
+<script>
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+
+  let stars = [];
+  const STAR_COUNT = 180;
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function initStars() {
+    stars = Array.from({ length: STAR_COUNT }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.2 + 0.2,
+      speed: Math.random() * 0.018 + 0.004,
+      opacity: Math.random() * 0.6 + 0.2,
+      twinklePhase: Math.random() * Math.PI * 2,
+      twinkleSpeed: Math.random() * 0.012 + 0.004,
+    }));
+  }
+
+  function draw(t) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      s.twinklePhase += s.twinkleSpeed;
+      const alpha = s.opacity * (0.6 + 0.4 * Math.sin(s.twinklePhase));
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(180,210,255,${alpha})`;
+      ctx.fill();
+      s.y += s.speed;
+      if (s.y > canvas.height) {
+        s.y = 0;
+        s.x = Math.random() * canvas.width;
+      }
+    });
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  initStars();
+  requestAnimationFrame(draw);
+  window.addEventListener('resize', () => { resize(); initStars(); });
+</script>
+
+</body>
+</html>
