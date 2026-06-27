@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>軌道デザイン│ohbitdesign</title>
-<link rel="icon" type="image/x-icon" href="ohbitdesign.ico">
+  <title>軌道デザイン│ohbitdesign</title>
+  <link rel="icon" type="image/x-icon" href="ohbitdesign.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono&family=Noto+Sans+JP:wght@300;400;500;700&family=Barlow:wght@500;600&display=swap" rel="stylesheet">
 
@@ -277,7 +277,7 @@
     color: #fff;
   }
   .sim-desc {
-    font-size: 0.75rem;
+    font-size: 12px;
     color: rgba(255,255,255,0.65);
     text-shadow: 0 1px 4px rgba(0,0,0,0.8);
     margin-top: 4px;
@@ -433,7 +433,7 @@
   }
 
   .card-desc {
-    font-size: 15px;
+    font-size: 12px;
     color: rgba(255,255,255,0.65);
     line-height: 1.4;
     text-shadow: 0 1px 4px rgba(0,0,0,0.8);
@@ -718,7 +718,7 @@
     .lang-switch{ font-size: 13px; }
 
     /* Hero */
-    #hero       { padding: 110px 0 32px; }
+    #hero       { padding: 190px 0 80px; }
     .hero-logo  { font-size: 36px; }
     .hero-sub   { font-size: 14px; }
     .hero-desc  { font-size: 13px; padding: 0 8px; }
@@ -733,7 +733,6 @@
       border-radius: 0;
     }
     .sim-title{ font-size: 14px; }
-    .sim-desc { font-size: 12px; }
     .sim-btn  { font-size: 12px; padding: 8px 14px; }
 
     /* 製品：2列 / span-2は全幅 */
@@ -752,7 +751,7 @@
 
     /* ショップ：1列・左右余白 */
     .shop-btns { flex-direction: column; align-items: center; gap: 12px; }
-    .shop-btn  { width: calc(100% - 64px); max-width: 340px; }
+    .shop-btn  { width: calc(50% - 26px); max-width: 265px; height: 50px; }
 
     /* フッター：縦積み */
     .footer-cols { grid-template-columns: 1fr; gap: 24px; }
@@ -835,7 +834,7 @@
     <div class="products-grid" id="grid-creator"></div>
 
     <!-- ショップへのリンク -->
-    <div style="margin-top:32px;" class="section-head"><span class="section-title">ショップ</span></div>
+    <div style="margin-top:32px;" class="section-head"><span class="section-title">外部リンク</span></div>
     <div class="shop-btns" id="shop-btns"></div>
   </div>
 </section>
@@ -864,14 +863,13 @@
       <div>
         <p class="footer-col-label">Pages</p>
         <a href="#hero"      class="footer-item">ohbitdesignについて</a>
-        <a href="#simulator" class="footer-item">宇宙船ドッキングシミュレーター</a>
-        <a href="#products"  class="footer-item">製品</a>
+        <a href="#products" class="footer-item">製品</a>
+        <a href="#products" class="footer-item">外部リンク</a>
       </div>
       <div>
-        <p class="footer-col-label">Shop</p>
+        <p class="footer-col-label">外部リンク</p>
         <a href="https://orbitdesign.booth.pm" class="footer-item" target="_blank">BOOTH</a>
-        <a href="#" class="footer-item">BASE</a>
-        <a href="#" class="footer-item">GUMROAD</a>
+        <a href="https://www.youtube.com/@ohbitdesign" class="footer-item" target="_blank">YouTube</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -922,7 +920,7 @@ const DATA = {
 
   // クリエイター系製品
   creator: [
-    { title: '右クリックHTML作成', desc: 'html作成効率化ツール',        price: '無料', cols: 1, img: 'images/space-product-08.png', link: 'https://orbitdesign.booth.pm' },
+    { title: '右クリックHTML作成', desc: 'html作成効率化ツール',        price: '無料', cols: 2, img: 'images/space-product-08.png', link: 'https://orbitdesign.booth.pm' },
     { title: 'Pictect',           desc: 'AI対策ツール',                price: '¥500', cols: 1, img: 'images/space-product-09.png', link: 'https://orbitdesign.booth.pm' },
     { title: 'パシャ消し',         desc: '撮影日時・位置情報削除ツール', price: '¥300', cols: 1, img: 'images/space-product-10.png', link: 'https://orbitdesign.booth.pm' },
     { title: '製品名', desc: 'ここに説明が入ります', price: '無料', cols: 1, img: 'images/space-product-11.png', link: '#', hidden: true },
@@ -940,6 +938,8 @@ const DATA = {
     { name: 'BOOTH',   link: 'https://orbitdesign.booth.pm', color: '#FC4D50', text: '#ffffff' },
     { name: 'BASE',    link: '#',                            color: '#F7D5B3', text: '#223035', hidden: true },
     { name: 'GUMROAD', link: '#',                            color: '#F78CE1', text: '#1a1a1a', hidden: true },
+    { name: 'YouTube', link: 'https://www.youtube.com/@ohbitdesign', color: '#FF0000', text: '#ffffff' },
+    { name: 'X',       link: 'https://x.com/ohbitdesign',            color: '#000000', text: '#ffffff', border: '1px solid #0B131E' },
   ],
 };
 
@@ -980,7 +980,7 @@ document.getElementById('videos-grid').innerHTML = DATA.videos.map(v => {
 /* ── ショップボタン ── */
 document.getElementById('shop-btns').innerHTML = DATA.shops.filter(s => !s.hidden).map(s =>
   `<a class="shop-btn" href="${s.link}" target="_blank" rel="noopener"
-     style="background:${s.color};color:${s.text};">${s.name}</a>`
+     style="background:${s.color};color:${s.text};${s.border ? 'border:'+s.border : ''}">${s.name}</a>`
 ).join('');
 
 /* ── シミュレーターリンク ── */
