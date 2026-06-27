@@ -194,9 +194,8 @@
   }
 
   .sim-card {
-    display: block;
+    display: grid;
     text-decoration: none;
-    position: relative;
     width: 740px;
     height: 360px;
     background: var(--card);
@@ -226,16 +225,16 @@
   }
 
   .sim-img {
-    position: absolute;
-    inset: 0;
-    width: 100%; height: 100%;
+    grid-area: 1/1;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     display: block;
   }
 
   .sim-info {
-    position: absolute;
-    inset: 0;
+    z-index: 1;
+    grid-area: 1/1;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -243,8 +242,9 @@
     background: linear-gradient(
       to bottom,
       transparent 0%,
-      rgba(8,9,15,0.40) 40%,
-      rgba(8,9,15,0.78) 100%
+      transparent 45%,
+      rgba(8,9,15,0.65) 72%,
+      rgba(8,9,15,0.92) 100%
     );
     justify-content: flex-end;
   }
@@ -704,7 +704,7 @@
     .product-card.span-2{ width: auto; height: auto; aspect-ratio: 2/1; }
     .product-card.span-3{ width: auto; height: auto; aspect-ratio: 3/1; }
 
-    .sim-card { width: 100%; height: 0; padding-top: 48.65%; }
+    .sim-card { width: 100%; height: auto; aspect-ratio: 740/360; }
   }
 
   /* モバイル */
@@ -728,8 +728,8 @@
 
     /* シミュレーター：740:360比率で全幅 */
     .sim-card {
-      width: 100%; height: 0;
-      padding-top: 48.65%;
+      width: 100%; height: auto;
+      aspect-ratio: 740/360;
       border-radius: 0;
     }
     .sim-title{ font-size: 14px; }
